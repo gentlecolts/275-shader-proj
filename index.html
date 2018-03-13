@@ -1,0 +1,36 @@
+<html>
+	<link rel="stylesheet" type="text/css" href="shaderstyle.css">
+	<title>Shady Dragon's DragonShader</title>
+	<head>
+		<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script>
+			function pageloader(pagefile)
+			{
+				$.ajax({
+					url: pagefile,
+					dataType: "html"
+					}).done(function( res )
+				{
+					$('#pagecontent').html(res);
+				})
+			}
+
+			pageloader("homepage.html");
+
+		</script>
+	</head>
+	<body>
+		<div id="pageheader">
+			<h0>SHADY&nbsp;DRAGON'S DRAGONSHADER&trade;</h0>
+			<h3>Chinh&nbsp;Nguyen&nbsp;- Samara&nbsp;Painter&nbsp;- Jack&nbsp;Phoebus&nbsp;- Andrew&nbsp;Yaros</h3>
+		</div>
+		
+		<div id="pagecontent">
+			<!-- Page HTML is loaded here -->
+		</div>
+		
+		<div id="pagefooter" >
+			&copy;&nbsp;2018&nbsp;Shady&nbsp;Dragon, all&nbsp;rights&nbsp;reserved
+		</div>
+	</body>
+</html>
