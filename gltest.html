@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>Title</title>
+
+<style>
+</style>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+	#ifdef GL_ES
+	precision mediump float;
+	#endif
+
+	uniform vec2 resolution;
+	uniform sampler2D texture;
+
+	void main(){
+		vec2 uv = gl_FragCoord.xy / resolution.xy;
+		gl_FragColor = texture2D( texture, uv );
+	}
+
+</script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+
+	attribute vec3 position;
+
+	void main(){
+		gl_Position = vec4( position, 1.0 );
+
+	}
+
+</script>
+
+<script id="surfaceVertexShader" type="x-shader/x-vertex">
+	attribute vec3 position;
+	attribute vec2 surfacePosAttrib;
+	varying vec2 surfacePosition;
+
+	void main() {
+		surfacePosition = surfacePosAttrib;
+		gl_Position = vec4( position, 1.0 );
+	}
+
+</script>
+
+
+<script type="text/javascript">
+function f(){
+}
+</script>
+</head>
+<body>
+</body>
+</html>
