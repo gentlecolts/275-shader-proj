@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <title>Title</title>
 
 <style>
@@ -40,15 +41,65 @@
 		surfacePosition = surfacePosAttrib;
 		gl_Position = vec4( position, 1.0 );
 	}
-
 </script>
 
 
 <script type="text/javascript">
-function f(){
-}
+
+var code, canvas, gl, buffer, currentProgram, vertexPosition, screenVertexPosition, panButton,
+	parameters={
+		startTime: Date.now(),
+		time: 0,
+		mouseX: 0.5,
+		mouseY: 0.5,
+		screenWidth: 0,
+		screenHeight: 0
+	},
+	surface={
+		centerX: 0,
+		centerY: 0,
+		width: 1,
+		height: 1,
+		isPanning: false,
+		isZooming: false,
+		lastX: 0,
+		lastY: 0 
+	},
+	frontTarget, backTarget, screenProgram, getWebGL, resizer = {}, compileOnChangeCode = true;
+
+$(document).read(function(){
+	//most of this setup code was sampled from glslsandbox.com, credit to them
+	var canvas=$("#target");
+	var gl=canvas.getContext('experimental-webgl',{preserveDrawingBuffer:true});
+	
+	//no gl, cant continue
+	if(!gl){
+		return null;
+	}
+	
+	// enable dFdx, dFdy, fwidth
+	gl.getExtension('OES_standard_derivatives');
+
+	// Create vertex buffer (2 triangles)
+	buffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( [ - 1.0, - 1.0, 1.0, - 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0 ] ), gl.STATIC_DRAW );
+
+	// Create surface buffer (coordinates at screen corners)
+	surface.buffer = gl.createBuffer();
+});
 </script>
 </head>
 <body>
+<table>
+<tr>
+<canvas id="target"></canvas>
+<td>
+</td>
+<td id="src">
+sadgg
+</td>
+</tr>
+</table>
 </body>
 </html>
