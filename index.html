@@ -4,26 +4,11 @@
 	<head>
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
 		
-		<!-- codemirror imports --->
+		<!-- codemirror imports -->
 		<script src="codemirror-5.35.0/lib/codemirror.js"></script>
 		<link rel="stylesheet" href="lib/codemirror.css">
 		<script src="codemirror-5.35.0/mode/clike/clike.js"></script>
-		
-		<script>
-			function pageloader(pagefile)
-			{
-				$.ajax({
-					url: pagefile,
-					dataType: "html"
-					}).done(function( res )
-				{
-					$('#pagecontent').html(res);
-				})
-			}
-			
-			pageloader("homepage.html");
-
-		</script>
+		<script src="client.js"></script>
 	</head>
 	<body>
 		<div id="pageheader">
@@ -34,29 +19,6 @@
 		<div id="pagecontent">
 			<!-- Page HTML is loaded here -->
 			<!-- THIS WILL BE FOR THE DRAGONSHADER EDITOR PAGE -->
-			<table id="contenttable" >
-				<tr>
-					<td width="50%" style="padding-right: 10px;" >
-						<div id="shadertitle">Shader Title</div>
-						<div id="shaderinfo">Shader description</div>						
-						<div id="shaderdisplay">	
-							<!-- The shader being worked on will display inside this div -->
-						</div>
-					</td>
-					<td width=50%  style="padding-left: 10px;"> <!-- Shader code will be in this text area (inside this table td) -->
-						<textarea id="shadercode" autofocus="autofocus" autocomplete="off"; tabindex="0" >Put code here</textarea> 
-					</td>
-				</tr>
-			</table>
-			<div id="toolbar">
-				<button class="button button1" onclick="refresh(currentshader)">Refresh</button>
-				<button class="button button1" onclick="save(currentshader)" >Save</button>
-				<button class="button button1" onclick="pageloader('homepage.html')" >Home</button>
-				<!-- Add more buttons here as necessary in this toolbar -->
-			</div>	
-			<div id="pagefooter" >
-				&copy;&nbsp;2018&nbsp;Shady&nbsp;Dragon, all&nbsp;rights&nbsp;reserved
-			</div>
 		</div>
 	</body>
 </html>
