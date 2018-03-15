@@ -1,23 +1,25 @@
 <!-- THIS WILL BE FOR THE DRAGONSHADER EDITOR PAGE -->
-<table id="contenttable" >
-	<tr>
-		<td width="50%" >
-			<div id="shadertitle">Shader Title</div>
-			<div id="shaderinfo">Shader description</div>						
-			<div id="shaderdisplay">	
-				<!-- The shader being worked on will display inside this div -->
+			<table id="contenttable" >
+				<tr>
+					<td width="50%" style="padding-right: 10px;" >
+						<div id="shadertitle">Shader Title</div>
+						<div id="shaderinfo">Shader description</div>						
+						<div id="shaderdisplay">	
+							<!-- The shader being worked on will display inside this div -->
+						</div>
+					</td>
+					<td width=50%  style="padding-left: 10px;"> <!-- Shader code will be in this text area (inside this table td) -->
+						<textarea id="shadercode" autofocus="autofocus" autocomplete="off"; tabindex="0" >Put code here</textarea> 
+					</td>
+				</tr>
+			</table>
+			<div id="toolbar">
+				<button class="button button1" onclick="refresh(currentshader)">Refresh</button>
+				<button class="button button1" onclick="save(currentshader)" >Save</button>
+				<button class="button button1" onclick="pageloader('homepage.html')" >Home</button>
+				<!-- Add more buttons here as necessary in this toolbar -->
+			</div>	
+			<div id="pagefooter" >
+				&copy;&nbsp;2018&nbsp;Shady&nbsp;Dragon, all&nbsp;rights&nbsp;reserved
 			</div>
-		</td>
-		<td width=50% > <!-- Shader code will be in this text area (inside this table td) -->
-			<textarea id="shadercode" autofocus="autofocus" autocomplete="off"; tabindex="0" >Put code here</textarea> 
-		</td>
-	</tr>
-</table>
-			
-<div id="toolbar">
-	<button class="button button1" onclick="refresh(currentshader)">Refresh</button>
-	<button class="button button1" onclick="save(currentshader)" >Save</button>
-	<button class="button button1" onclick="pageloader('homepage.html')" >Home</button>
-	<!-- Add more buttons here as necessary in this toolbar -->
-</div>
 
