@@ -57,6 +57,11 @@ function editorPage() {
 	});
 }
 
+function loadshader()
+{
+	//
+}
+
 $(document).ready(function() {
 	homePage();
 }
