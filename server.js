@@ -19,7 +19,7 @@ app.post("/save",function(req,res){
 
 app.get("/new",function(req,res){
 	var response = {
-		"id" = shade.newShader();
+		"id" : shade.newShader()
 	};
 	res.send(JSON.stringify(response));
 });
