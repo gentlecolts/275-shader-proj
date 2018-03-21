@@ -13,8 +13,9 @@ function save() {
 		success: function(msg) {
 			if (msg.success) {
 				shaderID = msg.id;
+				alert("Shader " + shaderID + " saved successfully!");
 			} else {
-				
+				alert("Shader was unable to be saved");
 			}
 		},
 		error: function(jgXHR, textStatus, thrownError) {

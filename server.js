@@ -1,32 +1,39 @@
 const express = require('express');
+const fs = require('fs');
+const bodyParser = require('body-parser');
 const app = express();
 app.use(express.static("."));
-const calc=require("./Calculator");
-const weather=require("./Weather");
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 
 app.listen(8080,function(){
 	console.log("live");
 });
 
-app.get("/calc",function(req,res){
-	res.send(calc.render());
+app.post("/save",function(req,res){
+	var code = req.body.code;
+	var id = parseInt(req.body.id);
+	if (id == 0) {
+		//new shader
+	} else {
+		//old shader with id
+	}
 });
 
-app.get("/sum",function(req,res){
-	res.send(calc.sum(req.query.n));
+app.get("/home",function(req,res){
+	var html = fs.readFileSync('./homepage.html', 'utf8');
+	res.send(html);
 });
 
-app.get("/fact",function(req,res){
-	res.send(calc.factorial(req.query.n));
+app.get("/editor",function(req,res){
+	var html = fs.readFileSync('./editorpage.html', 'utf8');
+	res.send(html);
 });
 
-app.get("/weather",function(req,res){
-	res.send(weather.render());
+app.get("/populate",function(req,res){
+	
 });
 
-app.get("/hourly",function(req,res){
-	weather.getWeather(req.query.zip,function(data){
-		//console.log(data);
-		res.send(data);
-	});
+app.get("/load",function(req,res){
+	
 });
