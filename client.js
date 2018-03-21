@@ -45,7 +45,10 @@ function editorPage() {
 			newdiv.innerHTML = msg;
 			var page = document.getElementById("pagecontent");
 			page.innerHTML = "";
+			var newscript = document.createElement('script');
+			newscript.src = "shader.js";
 			page.appendChild(newdiv);
+			page.appendChild(newscript);
 			
 			var codeMir = CodeMirror(document.getElementById("shadercode"));
 		},
