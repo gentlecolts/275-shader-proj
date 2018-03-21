@@ -29,7 +29,7 @@
 		{
 			background-color: #666666;
 			color: white;
-			border: 1px solid #888888;
+			border: 2px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 12px;
@@ -41,6 +41,7 @@
 		{ 
 			background-color: white;
 			color: black;
+			border: 2px solid black;
 		}
 		.buttonlist
 		{
@@ -48,7 +49,7 @@
 			height: 64px;
 			background-color: #666666;
 			color: white;
-			border: 1px solid #888888;
+			border: 2px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 15px;
@@ -60,6 +61,7 @@
 		{ 
 			background-color: white;
 			color: black;
+			border: 2px solid black;
 		}
 
 		#contenttable
@@ -87,7 +89,7 @@
 		}
 		#shaderdisplay
 		{
-			height: 512px;			
+			height: 512px;
 			width: 100%;
 			background-color: black;
 		}
