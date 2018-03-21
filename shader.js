@@ -233,7 +233,7 @@ function compile() {
 	if ( currentProgram ) {
 
 		gl.deleteProgram( currentProgram );
-		setURL( fragment );
+		//setURL( fragment );
 
 	}
 
