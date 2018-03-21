@@ -80,16 +80,9 @@
 			font-weight: bold;
 			font-size: 20pt;
 		}
-		#shaderinfo
-		{
-			height: 44px;
-			font-size: 12pt;
-			font-weight: normal;
-			text-align: center;
-		}
 		#shaderdisplay
 		{
-			height: 512px;
+			height: 600px;
 			width: 100%;
 			background-color: black;
 		}
@@ -102,6 +95,8 @@
 			background-color: #666666;
 			width: 100%;
 			bottom: -1em;
+			border: 2px solid #888888;
+
 		}
 		#toolbar
 		{
