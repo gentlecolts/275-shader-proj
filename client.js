@@ -68,7 +68,7 @@ function populatePreviews() {
 					+ "</button>"
 					+ "</td></tr>";
 			}
-			$("homeshaderlist").html(str);
+			$("shaderlist").html(str);
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);

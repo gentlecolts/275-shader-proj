@@ -1,7 +1,7 @@
 /* THIS IS THE DRAGONSHADER CSS FILE */
 		body
 		{
-			background-color: #424242;
+			background-color: #444444;
 			color: #eeeeee;
 			font-family: Helvetica,Arial,sans-serif;
 			padding: 1.5%;
@@ -28,7 +28,7 @@
 		{
 			background-color: #666666;
 			color: white;
-			border: 1px solid white;
+			border: 1px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 12px;
@@ -47,7 +47,7 @@
 			height: 64px;
 			background-color: #666666;
 			color: white;
-			border: 1px solid white;
+			border: 1px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 15px;
@@ -96,7 +96,7 @@
 			font-family: monospace, Courier New;
 			font-size: 12pt;
 			color: white;
-			background-color: #555555;
+			background-color: #666666;
 			width: 100%;
 			bottom: -1em;
 		}
