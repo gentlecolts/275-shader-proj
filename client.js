@@ -32,6 +32,7 @@ function homePage() {
 		dataType: "html",
 		success: function(msg) {
 			$('#pagecontent').html(msg);
+			populatePreviews();
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);
@@ -55,6 +56,12 @@ function editorPage() {
 			return;
 		}
 	});
+}
+
+function populatePreviews() {
+	//
+	// populate the shaderlist table in the homePage
+	//
 }
 
 function loadshader()
