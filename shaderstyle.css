@@ -29,7 +29,7 @@
 		{
 			background-color: #666666;
 			color: white;
-			border: 1px solid #888888;
+			border: 2px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 12px;
@@ -41,6 +41,7 @@
 		{ 
 			background-color: white;
 			color: black;
+			border: 2px solid black;
 		}
 		.buttonlist
 		{
@@ -48,7 +49,7 @@
 			height: 64px;
 			background-color: #666666;
 			color: white;
-			border: 1px solid #888888;
+			border: 2px solid #888888;
 			font-size: 12pt;
 			border-radius:17px;
 			padding: 15px;
@@ -60,6 +61,7 @@
 		{ 
 			background-color: white;
 			color: black;
+			border: 2px solid black;
 		}
 
 		#contenttable
@@ -78,16 +80,9 @@
 			font-weight: bold;
 			font-size: 20pt;
 		}
-		#shaderinfo
-		{
-			height: 44px;
-			font-size: 12pt;
-			font-weight: normal;
-			text-align: center;
-		}
 		#shaderdisplay
 		{
-			height: 512px;			
+			height: 600px;
 			width: 100%;
 			background-color: black;
 		}
@@ -100,6 +95,8 @@
 			background-color: #666666;
 			width: 100%;
 			bottom: -1em;
+			border: 2px solid #888888;
+
 		}
 		#toolbar
 		{
