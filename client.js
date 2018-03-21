@@ -42,7 +42,7 @@ function editorPage() {
 		dataType: "html",
 		success: function(msg) {
 			$('#pagecontent').html(msg);
-			var codeMir = CodeMirror($('#shadercode'));
+			var codeMir = CodeMirror(document.getElementById("shadercode"));
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);
