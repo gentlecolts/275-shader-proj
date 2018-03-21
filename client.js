@@ -67,8 +67,10 @@ function populatePreviews() {
 	var str = ""; //string for tablehtml
 	for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
 	{
-		str += "<tr><td height=\"64px"\; width="\75%\">"
+		str += "<tr><td height=\"64px\" width=\"75%\">"
+			+ "<button class=\"button buttonlist\">s
 			+ shaders[i]
+			+ "</button>"
 			+ "</td></tr>";
 	}
 	$("homeshaderlist").html(str);
