@@ -14,7 +14,11 @@ app.listen(8080,function(){
 app.post("/save",function(req,res){
 	var code = req.body.code;
 	var id = parseInt(req.body.id);
-	shade.saveShader(id, code);
+	try {
+		shade.saveShader(id, code);
+	} catch(err) {
+		res.send("error saving shader");
+	}
 });
 
 app.get("/new",function(req,res){
