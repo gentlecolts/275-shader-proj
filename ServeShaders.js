@@ -49,7 +49,26 @@ exports.getShader=function(id){
 //console.log(exports.getShader("3"));
 
 exports.newShader=function(){
+	//get the ids
+	var ids=getShaderList();
+	
+	//convert all to int and remove any non-ints, in case there's bad files
+	ids=ids.map(x=>parseInt(x)).filter(x=>!isNaN(x));
+	
+	//new id is max id + 1
+	var newid=Math.max.apply(null,ids)+1;
+	
+	//if we didnt get 
+	if(ids.length==0){
+		newid=0;
+	}
+	
+	newid=newid+"";
+	fs.writeFileSync(path.join(root,newid),"");
+	
+	return newid;
 }
+//for(var i=0;i<10;i++){console.log(exports.newShader());}
 
 exports.saveShader=function(id,contents){
 }
