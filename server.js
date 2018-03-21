@@ -43,7 +43,7 @@ app.get("/populate",function(req,res){
 });
 
 app.get("/load",function(req,res){
-	var id = parseInt(req.query.id);
+	var id = req.query.id;
 	try {
 		res.send(shade.getShader(id));
 	} catch(err) {

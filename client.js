@@ -41,7 +41,12 @@ function editorPage() {
 		url: URL,
 		dataType: "html",
 		success: function(msg) {
-			$('#pagecontent').html(msg);
+			var newdiv = document.createElement('div');
+			newdiv.innerHTML = msg;
+			var page = document.getElementById("pagecontent");
+			page.innerHTML = "";
+			page.appendChild(newdiv);
+			
 			var codeMir = CodeMirror(document.getElementById("shadercode"));
 		},
 		error: function(jgXHR, textStatus, thrownError) {
@@ -98,7 +103,22 @@ function newShader() {
 }
 
 function loadshader(id) {
-	//
+	editorPage();
+	var URL = "http://localhost:8080/load";
+	$.ajax({
+		type: "GET",
+		url: URL,
+		data: {
+			"id": id
+		},
+		success: function(msg) {
+			document.getElementById("shadercode").innerHTML = msg;
+		},
+		error: function(jgXHR, textStatus, thrownError) {
+			alert("Error: " + textStatus + " " + thrownError);
+			return;
+		}
+	});
 }
 
 $(document).ready(function() {
