@@ -14,11 +14,14 @@ app.listen(8080,function(){
 app.post("/save",function(req,res){
 	var code = req.body.code;
 	var id = parseInt(req.body.id);
-	if (id == 0) {
-		//new shader
-	} else {
-		//old shader with id
-	}
+	shade.saveShader(id, code);
+});
+
+app.get("/new",function(req,res){
+	var response = {
+		"id" = shade.newShader();
+	};
+	res.send(JSON.stringify(response));
 });
 
 app.get("/home",function(req,res){
@@ -32,9 +35,14 @@ app.get("/editor",function(req,res){
 });
 
 app.get("/populate",function(req,res){
-	
+	res.send(shade.getAll());
 });
 
 app.get("/load",function(req,res){
-	
+	var id = parseInt(req.query.id);
+	try {
+		res.send(shade.getShader(id));
+	} catch(err) {
+		res.send("shader not found");
+	}
 });
