@@ -12,12 +12,13 @@
 		}
 		h0
 		{
-			font-size: 40pt;
+			font-size: 30pt;
 			font-weight: bold;
 			color: white;
 			padding-top: 20px;
 			padding-bottom: 20px;
 		}
+		h1
 		#pagecontent, #pageheader, #pagefooter
 		{
 			width: 100%;
