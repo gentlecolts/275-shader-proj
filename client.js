@@ -8,15 +8,8 @@ function save() {
 		url: URL,
 		dataType: "jsonp",
 		data: {
-			"shader": shader
-		},
-		success: function(msg) {
-			if (msg.success) {
-				shaderID = msg.id;
-				alert("Shader " + shaderID + " saved successfully!");
-			} else {
-				alert("Shader was unable to be saved");
-			}
+			"shader": shader,
+			"id": shaderID
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);
@@ -60,23 +53,48 @@ function editorPage() {
 }
  
 function populatePreviews() {
-	// populate the shaderlist table in the homePage
-	//table itself exists already
-	//editing inside table tag
-	var shaders = [] //GET LIST OF STRINGS FROM SERVER
-	var str = ""; //string for tablehtml
-	for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
-	{
-		str += "<tr><td height=\"64px\" width=\"75%\">"
-			+ "<button class=\"button buttonlist\">s
-			+ shaders[i]
-			+ "</button>"
-			+ "</td></tr>";
-	}
-	$("homeshaderlist").html(str);
+	var URL = "http://localhost:8080/populate";
+	var shaders = [];
+	$.ajax({
+		type: "GET",
+		url: URL,
+		success: function(msg) {
+			shaders = msg;
+			var str = ""; //string for tablehtml
+			for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
+			{
+				str += "<tr><td height=\"64px\" width=\"75%\">"
+					+ "<button class=\"button buttonlist\">"
+					+ shaders[i]
+					+ "</button>"
+					+ "</td></tr>";
+			}
+			$("homeshaderlist").html(str);
+		},
+		error: function(jgXHR, textStatus, thrownError) {
+			alert("Error: " + textStatus + " " + thrownError);
+			return;
+		}
+	});
 }
 
-function loadshader() {
+function newShader() {
+	var URL = "http://localhost:8080/new";
+	$.ajax({
+		type: "GET",
+		url: URL,
+		dataType: "jsonp",
+		success: function(msg) {
+			shaderID = msg.id;
+		},
+		error: function(jgXHR, textStatus, thrownError) {
+			alert("Error: " + textStatus + " " + thrownError);
+			return;
+		}
+	});
+}
+
+function loadshader(id) {
 	//
 }
 
