@@ -198,12 +198,13 @@ function render() {
 }
 
 function compile() {
-	console.log(gl)
+	//console.log(gl)
 	var program = gl.createProgram();
 	//var fragment = code.getValue();
-	var fragment=$("#shadercode").text();
+	var fragment=$("#shadercode").val();
 	var vertex = document.getElementById( 'surfaceVertexShader' ).textContent;
-
+	//console.log(fragment)
+	
 	var vs = createShader( vertex, gl.VERTEX_SHADER );
 	var fs = createShader( fragment, gl.FRAGMENT_SHADER );
 
@@ -324,9 +325,17 @@ $(document).ready(function(){
 	// Create surface buffer (coordinates at screen corners)
 	surface.buffer = gl.createBuffer();
 	
+	//debugging
+	//console.log(canvas)
+	//console.log(gl)
+	
 	//load_url_code();
+	//console.log("creating")
 	createRenderTargets();
+	//console.log("screen")
 	compileScreenProgram();
+	//console.log("compile")
 	compile();
+	//console.log("animate")
 	animate();
 });
