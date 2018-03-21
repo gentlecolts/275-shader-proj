@@ -86,6 +86,7 @@ function newShader() {
 		dataType: "jsonp",
 		success: function(msg) {
 			shaderID = msg.id;
+			editorPage();
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);
