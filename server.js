@@ -1,8 +1,7 @@
 const express = require('express');
 const app = express();
 app.use(express.static("."));
-const calc=require("./Calculator");
-const weather=require("./Weather");
+const shade=require("./ServeShaders");
 
 app.listen(8080,function(){
 	console.log("live");
