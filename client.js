@@ -64,7 +64,7 @@ function populatePreviews() {
 			for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
 			{
 				str += "<tr><td>"
-					+ "<button onclick=\"loadshader("shaders[i]\")" class=\"button buttonlist\">"
+					+ "<button onclick=\"loadshader(" + shaders[i] + ")\" class=\"button buttonlist\">"
 					+ shaders[i]
 					+ "</button>"
 					+ "</td></tr>";
