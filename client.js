@@ -1,13 +1,13 @@
-var shaderID = 0;
+var shaderID;
 
 function save() {
-	var shader = $('#shadercode').value;
+	var shader = document.getElementById("shadercode").value;
 	var URL = "http://localhost:8080/save";
 	$.ajax({
 		type: "POST",
 		url: URL,
 		data: {
-			"shader": shader,
+			"code": shader,
 			"id": shaderID
 		},
 		error: function(jgXHR, textStatus, thrownError) {
@@ -49,8 +49,6 @@ function editorPage() {
 			newscript.src = "shader.js";
 			page.appendChild(newdiv);
 			page.appendChild(newscript);
-			
-			var codeMir = CodeMirror(document.getElementById("shadercode"));
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);
@@ -116,6 +114,7 @@ function loadshader(id) {
 		},
 		success: function(msg) {
 			document.getElementById("shadercode").innerHTML = msg;
+			shaderID = id;
 		},
 		error: function(jgXHR, textStatus, thrownError) {
 			alert("Error: " + textStatus + " " + thrownError);

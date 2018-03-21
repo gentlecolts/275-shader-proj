@@ -13,11 +13,11 @@ app.listen(8080,function(){
 
 app.post("/save",function(req,res){
 	var code = req.body.code;
-	var id = parseInt(req.body.id);
+	var id = req.body.id;
 	try {
 		shade.saveShader(id, code);
 	} catch(err) {
-		res.send("error saving shader");
+		console.log("error saving shader");
 	}
 });
 
