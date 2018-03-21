@@ -63,7 +63,7 @@ function populatePreviews() {
 			var str = ""; //string for tablehtml
 			for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
 			{
-				str += "<tr><td height=\"64px\" width=\"75%\">"
+				str += "<tr><td>"
 					+ "<button class=\"button buttonlist\">"
 					+ shaders[i]
 					+ "</button>"
