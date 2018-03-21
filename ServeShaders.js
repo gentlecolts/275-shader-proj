@@ -71,4 +71,10 @@ exports.newShader=function(){
 //for(var i=0;i<10;i++){console.log(exports.newShader());}
 
 exports.saveShader=function(id,contents){
+	if(isNaN(parseInt(id))){
+		throw "given id is not a number";
+	}
+	
+	fs.writeFileSync(path.join(root,id),contents);
 }
+//exports.saveShader("3","kjndfjklbdfvd");
