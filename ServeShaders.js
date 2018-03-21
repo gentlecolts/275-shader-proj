@@ -33,7 +33,7 @@ function getShaderList(){
 //console.log(getShaderList());
 
 exports.getAll=function(){
-	return getShadereList();//wif
+	return getShaderList();
 }
 
 exports.getShader=function(id){
