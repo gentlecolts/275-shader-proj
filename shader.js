@@ -338,4 +338,8 @@ $(document).ready(function(){
 	compile();
 	//console.log("animate")
 	animate();
+	
+	console.log("shaders ready");
 });
+
+console.log("loaded shader.js");
