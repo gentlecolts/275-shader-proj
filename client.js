@@ -58,18 +58,26 @@ function editorPage() {
 		}
 	});
 }
-
+ 
 function populatePreviews() {
-	//
 	// populate the shaderlist table in the homePage
-	//
+	//table itself exists already
+	//editing inside table tag
+	var shaders = [] //GET LIST OF STRINGS FROM SERVER
+	var str = ""; //string for tablehtml
+	for (i = 0; i < shaders.length; i++) //each row has one element; the shader in question
+	{
+		str += "<tr><td height=\"64px"\; width="\75%\">"
+			+ shaders[i]
+			+ "</td></tr>";
+	}
+	$("homeshaderlist").html(str);
 }
 
-function loadshader()
-{
+function loadshader() {
 	//
 }
 
 $(document).ready(function() {
 	homePage();
-}
+});
