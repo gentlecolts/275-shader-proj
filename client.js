@@ -6,7 +6,6 @@ function save() {
 	$.ajax({
 		type: "POST",
 		url: URL,
-		dataType: "jsonp",
 		data: {
 			"shader": shader,
 			"id": shaderID
@@ -83,9 +82,9 @@ function newShader() {
 	$.ajax({
 		type: "GET",
 		url: URL,
-		dataType: "jsonp",
 		success: function(msg) {
-			shaderID = msg.id;
+			var json = JSON.parse(msg);
+			shaderID = json.id;
 			editorPage();
 		},
 		error: function(jgXHR, textStatus, thrownError) {
