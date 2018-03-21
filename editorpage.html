@@ -1,11 +1,50 @@
 <!-- THIS WILL BE FOR THE DRAGONSHADER EDITOR PAGE -->
+<script id="fragmentShader" type="x-shader/x-fragment">
+	#ifdef GL_ES
+	precision mediump float;
+	#endif
+
+	uniform vec2 resolution;
+	uniform sampler2D texture;
+
+	void main(){
+		vec2 uv = gl_FragCoord.xy / resolution.xy;
+		gl_FragColor = texture2D( texture, uv );
+	}
+
+</script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+
+	attribute vec3 position;
+
+	void main(){
+		gl_Position = vec4( position, 1.0 );
+
+	}
+
+</script>
+
+<script id="surfaceVertexShader" type="x-shader/x-vertex">
+	attribute vec3 position;
+	attribute vec2 surfacePosAttrib;
+	varying vec2 surfacePosition;
+
+	void main() {
+		surfacePosition = surfacePosAttrib;
+		gl_Position = vec4( position, 1.0 );
+	}
+</script>
+
+<script src="shader.js"></script>
+
 			<table id="contenttable" >
 				<tr>
 					<td width="50%" style="padding-right: 10px;" >
 						<div id="shadertitle">Shader Title</div>
 						<div id="shaderinfo">Shader description</div>						
 						<div id="shaderdisplay">	
-							<!-- The shader being worked on will display inside this div -->
+							<canvas id="shadercanvas" style="width:100%;height:100%"></canvas>
 						</div>
 					</td>
 					<td width=50%  style="padding-left: 10px;"> <!-- Shader code will be in this text area (inside this table td) -->

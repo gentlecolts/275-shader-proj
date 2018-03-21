@@ -1,50 +1,3 @@
-<html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<title>Title</title>
-
-<style>
-</style>
-
-<script id="fragmentShader" type="x-shader/x-fragment">
-	#ifdef GL_ES
-	precision mediump float;
-	#endif
-
-	uniform vec2 resolution;
-	uniform sampler2D texture;
-
-	void main(){
-		vec2 uv = gl_FragCoord.xy / resolution.xy;
-		gl_FragColor = texture2D( texture, uv );
-	}
-
-</script>
-
-<script id="vertexShader" type="x-shader/x-vertex">
-
-	attribute vec3 position;
-
-	void main(){
-		gl_Position = vec4( position, 1.0 );
-
-	}
-
-</script>
-
-<script id="surfaceVertexShader" type="x-shader/x-vertex">
-	attribute vec3 position;
-	attribute vec2 surfacePosAttrib;
-	varying vec2 surfacePosition;
-
-	void main() {
-		surfacePosition = surfacePosAttrib;
-		gl_Position = vec4( position, 1.0 );
-	}
-</script>
-
-
-<script type="text/javascript">
 //most of this code was sampled from glslsandbox.com, credit to them
 
 var code, canvas, gl, buffer, currentProgram, vertexPosition, screenVertexPosition, panButton,
@@ -248,7 +201,7 @@ function compile() {
 	console.log(gl)
 	var program = gl.createProgram();
 	//var fragment = code.getValue();
-	var fragment=$("#src").text();
+	var fragment=$("#shadercode").text();
 	var vertex = document.getElementById( 'surfaceVertexShader' ).textContent;
 
 	var vs = createShader( vertex, gl.VERTEX_SHADER );
@@ -350,7 +303,7 @@ function onWindowResize( event ) {
 }
 
 $(document).ready(function(){
-	var canvas=$("#target").get(0);
+	var canvas=$("#shadercanvas").get(0);
 	gl=canvas.getContext('experimental-webgl',{preserveDrawingBuffer:true});
 	
 	//no gl, cant continue
@@ -377,42 +330,3 @@ $(document).ready(function(){
 	compile();
 	animate();
 });
-</script>
-</head>
-<body>
-<table>
-<tr>
-<canvas id="target"></canvas>
-<td>
-</td>
-<td id="src">
-#ifdef GL_ES
-precision mediump float;
-#endif
-
-#extension GL_OES_standard_derivatives : enable
-
-uniform float time;
-uniform vec2 resolution;
-
-float sq(float x) {
-	return x*x;
-}
-
-void main() {
-    vec2 p = gl_FragCoord.xy / resolution.x * .9;
-    vec3 col;
-    for(float j = 0.0; j < 6.0; j++){
-        for(float i = 1.0; i < 10.0; i++){
-            p.x += 0.1 / (i + j) * sin(i * 10.0 * p.y + time + cos((time / (2. * i)) * i + j));
-            p.y += 0.1 / (i + j)* cos(i * 10.0 * p.x + time + sin((time / (2. * i)) * i + j));
-        }
-        col[int(j)] = sin(5.0*sq(p.x)) + sin(5.0*sq(p.y));
-    }
-    gl_FragColor = vec4(col, 1.);
-}
-</td>
-</tr>
-</table>
-</body>
-</html>
