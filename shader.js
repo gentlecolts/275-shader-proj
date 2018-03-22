@@ -260,11 +260,28 @@ function compile() {
 	gl.enableVertexAttribArray( vertexPosition );
 }
 
+function computeSurfaceCorners() {
+	if (gl) {
+		surface.width = surface.height * parameters.screenWidth / parameters.screenHeight;
+		
+		var halfWidth = surface.width * 0.5, halfHeight = surface.height * 0.5;
+		
+		gl.bindBuffer( gl.ARRAY_BUFFER, surface.buffer );
+		gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( [
+			surface.centerX - halfWidth, surface.centerY - halfHeight,
+			surface.centerX + halfWidth, surface.centerY - halfHeight,
+			surface.centerX - halfWidth, surface.centerY + halfHeight,
+			surface.centerX + halfWidth, surface.centerY - halfHeight,
+			surface.centerX + halfWidth, surface.centerY + halfHeight,
+			surface.centerX - halfWidth, surface.centerY + halfHeight ] ), gl.STATIC_DRAW );
+
+	}
+
+}
+
 function onWindowResize( event ) {
 	var isMaxWidth = ((resizer.currentWidth === resizer.maxWidth) || (resizer.currentWidth === resizer.minWidth)),
 		isMaxHeight = ((resizer.currentHeight === resizer.maxHeight) || (resizer.currentHeight === resizer.minHeight));
-
-	toolbar.style.width = window.innerWidth - 47 + 'px';
 
 	resizer.isResizing = false;
 	resizer.maxWidth = window.innerWidth - 75;
@@ -278,16 +295,15 @@ function onWindowResize( event ) {
 	if (resizer.currentWidth < resizer.minWidth) { resizer.currentWidth = resizer.minWidth; }
 	if (resizer.currentHeight < resizer.minHeight) { resizer.currentHeight = resizer.minHeight; }
 
-	code.getWrapperElement().style.top = '75px';
-	code.getWrapperElement().style.left = '25px';
-	code.getWrapperElement().style.width = resizer.currentWidth + 'px';
-	code.getWrapperElement().style.height = resizer.currentHeight + 'px';
-
+	var quality=2;
+	
+	var canvas=$("#shadercanvas").get(0);
+	
 	canvas.width = window.innerWidth / quality;
 	canvas.height = window.innerHeight / quality;
-
-	canvas.style.width = window.innerWidth + 'px';
-	canvas.style.height = window.innerHeight + 'px';
+	
+	//canvas.style.width = window.innerWidth + 'px';
+	//canvas.style.height = window.innerHeight + 'px';
 
 	parameters.screenWidth = canvas.width;
 	parameters.screenHeight = canvas.height;
@@ -334,6 +350,8 @@ $(document).ready(function(){
 	createRenderTargets();
 	//console.log("screen")
 	compileScreenProgram();
+	
+	onWindowResize();
 	//console.log("compile")
 	compile();
 	//console.log("animate")

@@ -1,0 +1,397 @@
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform float time;
+uniform vec2 mouse;
+uniform vec2 resolution;
+
+
+// "Rayleigh Scattering" by valery.sntx@gmail.com - 2017
+// "Seascape" by Alexander Alekseev aka TDM - 2014
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+const int NUM_STEPS = 32;
+const float PI	 	= 3.1415;
+const float EPSILON	= 1e-3;
+float EPSILON_NRM	= 0.;
+
+// sea
+const int ITER_GEOMETRY = 3;
+const int ITER_FRAGMENT = 5;
+const float SEA_HEIGHT = 0.6;
+const float SEA_CHOPPY = 4.0;
+const float SEA_SPEED = 0.8;
+const float SEA_FREQ = 0.16;
+const vec3 SEA_BASE = vec3(0.1,0.16,0.22);
+const vec3 SEA_WATER_COLOR = vec3(0.1,0.13,0.025);
+float SEA_TIME = 0.;
+mat2 octave_m = mat2(1.6,1.2,-1.2,1.6);
+
+// math
+mat3 fromEuler(vec3 ang) {
+	vec2 a1 = vec2(sin(ang.x),cos(ang.x));
+    vec2 a2 = vec2(sin(ang.y),cos(ang.y));
+    vec2 a3 = vec2(sin(ang.z),cos(ang.z));
+    mat3 m;
+    m[0] = vec3(a1.y*a3.y+a1.x*a2.x*a3.x,a1.y*a2.x*a3.x+a3.y*a1.x,-a2.y*a3.x);
+	m[1] = vec3(-a2.y*a1.x,a1.y*a2.y,a2.x);
+	m[2] = vec3(a3.y*a1.x*a2.x+a1.y*a3.x,a1.x*a3.x-a1.y*a3.y*a2.x,a2.y*a3.y);
+	return m;
+}
+float hash( vec2 p ) {
+	float h = dot(p,vec2(127.1,311.7));	
+    return fract(sin(h)*43758.5453123);
+}
+float noise( in vec2 p ) {
+    vec2 i = floor( p );
+    vec2 f = fract( p );	
+	vec2 u = f*f*(3.0-2.0*f);
+    return -1.0+2.0*mix( mix( hash( i + vec2(0.0,0.0) ), 
+                     hash( i + vec2(1.0,0.0) ), u.x),
+                mix( hash( i + vec2(0.0,1.0) ), 
+                     hash( i + vec2(1.0,1.0) ), u.x), u.y);
+}
+
+// lighting
+float diffuse(vec3 n,vec3 l,float p) {
+    return pow(dot(n,l) * 0.4 + 0.6,p);
+}
+float specular(vec3 n,vec3 l,vec3 e,float s) {    
+    float nrm = (s + 8.0) / (3.1415 * 8.0);
+    return pow(max(dot(reflect(e,n),l),0.0),s) * nrm;
+}
+
+// sky
+vec3 getSkyColor(vec3 e) {
+    e.y = max(e.y,0.0);
+    vec3 ret;
+    ret.x = pow(1.0-e.y,2.0);
+    ret.y = 1.0-e.y;
+    ret.z = 0.6+(1.0-e.y)*0.4;
+    return ret;
+}
+
+// sea
+float sea_octave(vec2 uv, float choppy) {
+    uv += noise(uv);        
+    vec2 wv = 1.0-abs(sin(uv));
+    vec2 swv = abs(cos(uv));    
+    wv = mix(wv,swv,wv);
+    return pow(1.0-pow(wv.x * wv.y,0.44),choppy);
+}
+
+float map(vec3 p) {
+    float freq = SEA_FREQ;
+    float amp = SEA_HEIGHT;
+    float choppy = SEA_CHOPPY;
+    vec2 uv = p.xz; uv.x *= 0.75;
+    
+    float d, h = 0.0;    
+    for(int i = 0; i < ITER_GEOMETRY; i++) {        
+    	d = sea_octave((uv+SEA_TIME)*freq,choppy);
+    	d += sea_octave((uv-SEA_TIME)*freq,choppy);
+        h += d * amp;        
+    	uv *= octave_m; freq *= 15.9; amp *= mouse.x / 10. + 0.122;
+        choppy = mix(choppy,1.0,0.2);
+    }
+    return p.y - h;
+}
+
+float map_detailed(vec3 p) {
+    float freq = SEA_FREQ;
+    float amp = SEA_HEIGHT;
+    float choppy = SEA_CHOPPY;
+    vec2 uv = p.xz; uv.x *= 0.75;
+    
+    float d, h = 0.0;    
+    for(int i = 0; i < ITER_FRAGMENT; i++) {        
+    	d = sea_octave((uv+SEA_TIME)*freq,choppy);
+    	d += sea_octave((uv-SEA_TIME)*freq,choppy);
+        h += d * amp;        
+    	uv *= octave_m; freq *= 1.9; amp *= 0.22;
+        choppy = mix(choppy,1.0,0.2);
+    }
+    return p.y - h;
+}
+
+
+// tracing
+vec3 getNormal(vec3 p, float eps) {
+    vec3 n;
+    n.y = map_detailed(p);    
+    n.x = map_detailed(vec3(p.x+eps,p.y,p.z)) - n.y;
+    n.z = map_detailed(vec3(p.x,p.y,p.z+eps)) - n.y;
+    n.y = eps;
+    return normalize(n);
+}
+
+float heightMapTracing(vec3 ori, vec3 dir, out vec3 p) {  
+    float tm = 0.0;
+    float tx = 1000.0;    
+    float hx = map(ori + dir * tx);
+    if(hx > 0.0) return tx;   
+    float hm = map(ori + dir * tm);    
+    float tmid = 0.0;
+    for(int i = 0; i < NUM_STEPS; i++) {
+        tmid = mix(tm,tx, hm/(hm-hx));                   
+        p = ori + dir * tmid;                   
+    	float hmid = map(p);
+		if(hmid < 0.0) {
+        	tx = tmid;
+            hx = hmid;
+        } else {
+            tm = tmid;
+            hm = hmid;
+        }
+    }
+    return tmid;
+}
+
+
+float hash2( float n ){
+    return fract(sin(n)*758.5453);
+}
+
+float noise2d( in vec2 x ){
+    vec2 p = floor(x);
+    vec2 f = smoothstep(0.0, 1.0, fract(x));
+    float n = p.x + p.y*57.0;
+    return mix(mix(hash2(n+0.0),hash2(n+1.0),f.x),mix(hash2(n+57.0),hash2(n+58.0),f.x),f.y);
+}
+
+float configurablenoise(vec3 x, float h2, float h1) {
+    vec3 p = floor(x);
+    vec3 f = fract(x);
+    f = f*f*(3.0-2.0*f);
+
+    float n = p.x + p.y*h1+ h2*p.z;
+    return mix(mix(    mix( hash2(n+0.0), hash2(n+1.0),f.x),
+        mix(hash2(n+h1), hash2(n+h1+1.0),f.x),f.y),
+        mix(mix(hash2(n+h2), hash2(n+h2+1.0),f.x),
+        mix(hash2(n+h2+h1), hash2(n+h2+h1+1.0),f.x),f.y),f.z);
+}
+
+#define noise3d(a) configurablenoise(a, 883.0, 971.0)
+
+float supernoise3d(vec3 p){
+    float a =  configurablenoise(p, 883.0, 971.0);
+    float b =  configurablenoise(p + 0.5, 113.0, 157.0);
+    return (a + b) * 0.5;
+}
+float supernoise3dX(vec3 p){
+    float a =  configurablenoise(p, 883.0, 971.0);
+    float b =  configurablenoise(p + 0.5, 113.0, 157.0);
+    return (a * b);
+}
+
+#define iSteps 4
+#define jSteps 6
+
+#define PI 3.1415
+#define VECTOR_UP vec3(0.0, -1.0, 0.0)
+
+vec3 wind(vec3 p){
+    return vec3(
+        supernoise3d(p),
+        supernoise3d(p.yzx),
+        supernoise3d(-p.xzy)
+        ) * 2.0 - 1.0;
+}
+
+
+float fbmHI(vec3 p){
+   // p *= 0.1;
+    p *= 0.0000169;
+    p.x *= 0.489;
+   // p += vec(hiFreq.Time) * 0.02;
+    p += wind(p * 01.2) * 16.0;
+    float a = 0.0;
+    float w = 1.0;
+    float wc = 0.0;
+    for(int i=0;i<4;i++){
+       // p += noise(vec3(a));
+        a += clamp(1.0 * abs(0.5 - (supernoise3dX(p))) * w, 0.0, 1.0);
+        wc += w;
+        w *= 0.5;
+        p = p * 3.0;
+    }
+    return a / wc;// + noise(p * 100.0) * 11;
+}
+
+
+float planetradius = 6178000.1;
+
+struct Ray {
+    vec3 o;
+    vec3 d;
+};
+	
+struct Sphere {
+    vec3 pos;
+    float rad;
+};
+	
+float atmosphereradius = 80000.0;
+vec3 world_planet_origin = vec3(0.0, planetradius, 0.0);
+Sphere planet = Sphere(vec3(0), planetradius);
+Sphere atmo_sphere = Sphere(vec3(0), planetradius + atmosphereradius);
+
+#define toplanetspace(a) (a+world_planet_origin)
+
+float minhit = 0.0;
+float maxhit = 0.0;
+float rsi2(in Ray ray, in Sphere sphere)
+{
+    vec3 oc = ray.o - sphere.pos;
+    float b = 2.0 * dot(ray.d, oc);
+    float c = dot(oc, oc) - sphere.rad*sphere.rad;
+    float disc = b * b - 4.0 * c;
+    vec2 ex = vec2(-b - sqrt(disc), -b + sqrt(disc))/2.0;
+    minhit = min(ex.x, ex.y);
+    maxhit = max(ex.x, ex.y);
+    return mix(ex.y, ex.x, step(0.0, ex.x));
+}
+
+vec3 atmosphere(vec3 r, vec3 r0, vec3 pSun, float iSun, float rPlanet, float rAtmos, vec3 kRlh, float kMie, float shRlh, float shMie, float g) {
+
+    pSun = normalize(pSun);
+    r = normalize(r);
+    float rs = rsi2(Ray(r0, r), Sphere(vec3(0), rAtmos));
+    vec3 px = r0 + r * rs;
+    shMie *= smoothstep(0.7, 1.0, 1.0) * ((pow(fbmHI(px  + wind(px * 0.00000669) * 40000.0) * (supernoise3dX(px* 0.00000669 + g * 0.001)*0.5 + 0.5) * 1.3, 3.0) * 0.8 + 0.5));
+    float iStepSize = rs / float(iSteps);
+    float iTime = 0.0;
+    vec3 totalRlh = vec3(0,0,0);
+    vec3 totalMie = vec3(0,0,0);
+    float iOdRlh = 0.0;
+    float iOdMie = 0.0;
+    float mu = dot(r, pSun);
+    float mumu = mu * mu;
+    float gg = g * g;
+    float pRlh = 3.0 / (16.0 * PI) * (1.0 + mumu);
+    float pMie = 3.0 / (8.0 * PI) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * g, 1.5) * (2.0 + gg));
+    for (int i = 0; i < iSteps; i++) {
+        vec3 iPos = r0 + r * (iTime + iStepSize * 0.5);
+        float iHeight = length(iPos) - rPlanet;
+        float odStepRlh = exp(-iHeight / shRlh) * iStepSize;
+        float odStepMie = exp(-iHeight / shMie) * iStepSize;
+        iOdRlh += odStepRlh;
+        iOdMie += odStepMie;
+        float jStepSize = rsi2(Ray(iPos, pSun), Sphere(vec3(0),rAtmos)) / float(jSteps);
+        float jTime = 0.0;
+        float jOdRlh = 0.0;
+        float jOdMie = 0.0;
+        float invshRlh = 1.0 / shRlh;
+        float invshMie = 1.0 / shMie;
+        for (int j = 0; j < jSteps; j++) {
+            vec3 jPos = iPos + pSun * (jTime + jStepSize * 0.5);
+            float jHeight = length(jPos) - rPlanet;
+            jOdRlh += exp(-jHeight * invshRlh) * jStepSize;
+            jOdMie += exp(-jHeight * invshMie) * jStepSize;
+            jTime += jStepSize;
+        }
+        vec3 attn = exp(-(kMie * (iOdMie + jOdMie) + kRlh * (iOdRlh + jOdRlh)));
+        totalRlh += odStepRlh * attn;
+        totalMie += odStepMie * attn;
+        iTime += iStepSize;
+    }
+    return max(vec3(0.0), iSun * (pRlh * kRlh * totalRlh + pMie * kMie * totalMie));
+}
+
+vec3 getAtmosphereForDirectionReal(vec3 origin, vec3 dir, vec3 sunpos){
+
+//    return supersimpleatmosphere(origin, dir, sunpos);
+
+    float mult = max(1.0, dot(VECTOR_UP, pow(sunpos,origin)) * 0.19 + 0.1);
+
+   
+
+    dir.y = abs(dir.y);
+    return
+	atmosphere(
+        dir,           // normalized ray direction
+        vec3(0,planetradius  ,0) + origin,               // ray origin
+        sunpos,                        // position of the sun
+        50.0,                           // intensity of the sun
+        planetradius,                         // radius of the planet in meters
+        6378000.1 + 80000.0,                         // radius of the atmosphere in meters
+        pow(vec3(50.0/255.0, 111.0/255.0, 183.0/255.0), vec3(2.4)) * 0.00002, // Rayleigh scattering coefficient
+    //    vec3(5.5e-6, 13.0e-6, 22.4e-6), // Rayleigh scattering coefficient
+    //    vec3(0.05e-5, 0.10e-5, 0.25e-5) * 2.0, // Rayleigh scattering coefficient
+      //  vec3(4.5e-6, 10.0e-6, 2.4e-6), // Rayleigh scattering coefficient
+        21e-6,                          // Mie scattering coefficient
+        8e3,                            // Rayleigh scale height
+        1.2e3   ,                          // Mie scale height
+        0.758                         // Mie preferred scattering direction
+    );/* +
+     atmosphere(
+        dir,           // normalized ray direction
+        vec3(0,planetradius  ,0) + origin,               // ray origin
+        dayData.moonDir,                        // position of the sun
+        2.0 / 300.0,                           // intensity of the sun
+        planetradius,                         // radius of the planet in meters
+        6471e3,                         // radius of the atmosphere in meters
+        vec3(5.5e-6, 13.0e-6, 22.4e-6), // Rayleigh scattering coefficient
+       // vec3(0.05e-5, 0.10e-5, 0.25e-5) * 2.0, // Rayleigh scattering coefficient
+      //  vec3(4.5e-6, 10.0e-6, 2.4e-6), // Rayleigh scattering coefficient
+        21e-6,                          // Mie scattering coefficient
+        2e3,                            // Rayleigh scale height
+        11.2e3  * MieScattCoeff ,                          // Mie scale height
+        0.758                         // Mie preferred scattering direction
+    );*/
+}
+
+
+
+vec3 getSeaColor(vec3 p, vec3 n, vec3 l, vec3 eye, vec3 dist, vec3 light) {  
+    float fresnel = 1.0 - max(dot(n,-eye),0.0);
+    fresnel = pow(fresnel,3.0) * 0.65;
+        
+    vec3 scatter =  getAtmosphereForDirectionReal(eye, l, light);	
+    vec3 reflected = getSkyColor(reflect(eye,n) * scatter);    
+    vec3 refracted = SEA_BASE + diffuse(n,l,80.0) * SEA_WATER_COLOR * 0.12 * scatter; 
+    
+    vec3 color = mix(refracted,reflected,fresnel);
+    
+    float atten = max(1.0 - dot(dist,dist) * 0.001, 0.0);
+    color += SEA_WATER_COLOR * (p.y - SEA_HEIGHT) * 0.18 * atten;
+    
+    color += vec3(specular(n,l,eye,60.0));
+    
+    return color;
+}
+
+// main
+void main( void ) {
+	EPSILON_NRM = 0.1 / resolution.x;
+	SEA_TIME = time * SEA_SPEED;
+	
+	vec2 uv = gl_FragCoord.xy / resolution.xy;
+    uv = uv * 2.0 - 1.0;
+    uv.x *= resolution.x / resolution.y;    
+    float time = time * 0.3 + mouse.x*0.01;
+        
+    // ray
+    vec3 ang = vec3(sin(time*3.0)*0.1,sin(time)*0.2+0.3,time);    
+    vec3 ori = vec3(0.0,3.5,time*5.0);
+    vec3 dir = normalize(vec3(uv.xy,-2.0)); dir.z += length(uv) * 0.15;
+    dir = normalize(dir) * fromEuler(ang);
+    
+    // tracing
+    vec3 p;
+    heightMapTracing(ori,dir,p);
+    vec3 dist = p - ori;
+    vec3 n = getNormal(p, dot(dist,dist) * EPSILON_NRM);
+    vec3 light = normalize(vec3(0.0,1.0,0.8)); 
+             
+    // color
+    vec3 color = mix(
+        getSkyColor(dir)*getAtmosphereForDirectionReal(ori, dir, light),
+        getSeaColor(p,n,light, dir, dist, ori),
+    	pow(smoothstep(0.0,-0.05,dir.y),0.3));
+        
+	
+    // post
+	gl_FragColor = vec4(pow(color,vec3(0.75)), 1.0);
+}
