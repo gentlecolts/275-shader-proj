@@ -299,8 +299,11 @@ function onWindowResize( event ) {
 	
 	var canvas=$("#shadercanvas").get(0);
 	
-	canvas.width = window.innerWidth / quality;
-	canvas.height = window.innerHeight / quality;
+	canvas.width=canvas.clientWidth;
+	canvas.height=canvas.clientHeight;
+	
+	//canvas.width = window.innerWidth / quality;
+	//canvas.height = window.innerHeight / quality;
 	
 	//canvas.style.width = window.innerWidth + 'px';
 	//canvas.style.height = window.innerHeight + 'px';
