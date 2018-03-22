@@ -17,11 +17,11 @@ var code, canvas, gl, buffer, currentProgram, vertexPosition, screenVertexPositi
 		isPanning: false,
 		isZooming: false,
 		lastX: 0,
-		lastY: 0 
+		lastY: 0
 	},
 	frontTarget, backTarget, screenProgram, getWebGL, resizer = {}, compileOnChangeCode = true;
 
-function createShader( src, type ) {	
+function createShader( src, type ) {
 	var shader = gl.createShader( type );
 	var line, lineNum, lineError, index = 0, indexEnd;
 
@@ -30,13 +30,13 @@ function createShader( src, type ) {
 
 	if ( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
 		var error = gl.getShaderInfoLog( shader );
-		
+
 		// Remove trailing linefeed, for FireFox's benefit.
 		while ((error.length > 1) && (error.charCodeAt(error.length - 1) < 32)) {
 			error = error.substring(0, error.length - 1);
 		}
 
-		console.error( error );
+		//console.error( error );
 
 		return null;
 	}
@@ -88,7 +88,7 @@ function createTarget( width, height ) {
 
 	return target;
 }
-			
+
 function createRenderTargets() {
 	frontTarget = createTarget( parameters.screenWidth, parameters.screenHeight );
 	backTarget = createTarget( parameters.screenWidth, parameters.screenHeight );
@@ -117,7 +117,7 @@ function compileScreenProgram() {
 
 	if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
 
-		console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
+		//console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
 
 		return;
 	}
@@ -146,7 +146,7 @@ function render() {
 	// Set uniforms for custom shader
 
 	gl.useProgram( currentProgram );
-
+	gl.disableVertexAttribArray(1)
 	gl.uniform1f( currentProgram.uniformsCache[ 'time' ], parameters.time / 1000 );
 	gl.uniform2f( currentProgram.uniformsCache[ 'mouse' ], parameters.mouseX, parameters.mouseY );
 	gl.uniform2f( currentProgram.uniformsCache[ 'resolution' ], parameters.screenWidth, parameters.screenHeight );
@@ -155,7 +155,7 @@ function render() {
 
 	gl.bindBuffer( gl.ARRAY_BUFFER, surface.buffer );
 	gl.vertexAttribPointer( surface.positionAttribute, 2, gl.FLOAT, false, 0, 0 );
-	
+
 	gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
 	gl.vertexAttribPointer( vertexPosition, 2, gl.FLOAT, false, 0, 0 );
 
@@ -178,7 +178,7 @@ function render() {
 
 	gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
 	gl.vertexAttribPointer( screenVertexPosition, 2, gl.FLOAT, false, 0, 0 );
-	
+
 	gl.activeTexture( gl.TEXTURE1 );
 	gl.bindTexture( gl.TEXTURE_2D, frontTarget.texture );
 
@@ -204,7 +204,7 @@ function compile() {
 	var fragment=$("#shadercode").val();
 	var vertex = document.getElementById( 'surfaceVertexShader' ).textContent;
 	//console.log(fragment)
-	
+
 	var vs = createShader( vertex, gl.VERTEX_SHADER );
 	var fs = createShader( fragment, gl.FRAGMENT_SHADER );
 
@@ -222,9 +222,9 @@ function compile() {
 
 		var error = gl.getProgramInfoLog( program );
 
-		console.error( error );
+		//console.error( error );
 
-		console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
+		//console.error( 'VALIDATE_STATUS: ' + gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'ERROR: ' + gl.getError() );
 
 		return;
 
@@ -295,25 +295,25 @@ function onWindowResize( event ) {
 	computeSurfaceCorners();
 
 	if (gl) {
-	
+
 		gl.viewport( 0, 0, canvas.width, canvas.height );
 
 		createRenderTargets();
-		
+
 	}
 }
 
 $(document).ready(function(){
 	var canvas=$("#shadercanvas").get(0);
 	gl=canvas.getContext('experimental-webgl',{preserveDrawingBuffer:true});
-	
+
 	//no gl, cant continue
 	if(!gl){
 		console.log("couldnt get context");
 		return null;
 	}
 	console.log(gl);
-	
+
 	// enable dFdx, dFdy, fwidth
 	gl.getExtension('OES_standard_derivatives');
 
@@ -324,11 +324,11 @@ $(document).ready(function(){
 
 	// Create surface buffer (coordinates at screen corners)
 	surface.buffer = gl.createBuffer();
-	
+
 	//debugging
 	//console.log(canvas)
 	//console.log(gl)
-	
+
 	//load_url_code();
 	//console.log("creating")
 	createRenderTargets();
@@ -338,7 +338,7 @@ $(document).ready(function(){
 	compile();
 	//console.log("animate")
 	animate();
-	
+
 	console.log("shaders ready");
 });
 

@@ -16,8 +16,10 @@ app.post("/save",function(req,res){
 	var id = req.body.id;
 	try {
 		shade.saveShader(id, code);
+		res.send("Executed");
 	} catch(err) {
 		console.log("error saving shader");
+		res.send("Error");
 	}
 });
 
